@@ -1,0 +1,22 @@
+services:
+  cpv:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: cpv-platform:0.1.0-mvp
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+      # Phase 1 runs in mock mode — no external credentials required.
+      # Add real credentials via a .env file (never commit .env.local).
+      - NEXT_PUBLIC_SUPABASE_URL=
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
